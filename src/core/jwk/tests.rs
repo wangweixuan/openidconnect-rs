@@ -13,8 +13,8 @@ use crate::{JsonWebKey, JsonWebKeyId, JsonWebTokenAlgorithm, PrivateSigningKey, 
 
 use base64::prelude::BASE64_STANDARD;
 use base64::Engine;
-use rand08::rngs::mock::StepRng;
-use rand08::{CryptoRng, RngCore};
+use rand::rngs::mock::StepRng;
+use rand::{CryptoRng, RngCore};
 use rsa::rand_core;
 
 #[test]
