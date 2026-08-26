@@ -239,7 +239,7 @@ where
             ref content_type => Err(UserInfoError::Response(
                 http_response.status(),
                 http_response.body().to_owned(),
-                format!("unexpected response Content-Type: `{:?}`", content_type),
+                format!("unexpected response Content-Type: `{content_type:?}`"),
             )),
         }
     }

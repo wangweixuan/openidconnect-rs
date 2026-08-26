@@ -145,10 +145,7 @@ where
             JsonWebTokenAlgorithm::Encryption(ref other) => {
                 Err(SignatureVerificationError::UnsupportedAlg(
                     serde_plain::to_string(other).unwrap_or_else(|err| {
-                        panic!(
-                            "encryption alg {:?} failed to serialize to a string: {}",
-                            other, err
-                        )
+                        panic!("encryption alg {other:?} failed to serialize to a string: {err}")
                     }),
                 ))
             }
