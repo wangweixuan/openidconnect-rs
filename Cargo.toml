@@ -52,7 +52,7 @@ thiserror = "2"
 http = "1.0"
 itertools = "0.14"
 log = "0.4"
-oauth2 = { version = "5.0.0", default-features = false }
+oauth2 = { git = "https://github.com/wangweixuan/oauth2-rs", branch = "renovate-base", version = "5.1.0", default-features = false }
 rand = "0.10"
 hmac = "0.13"
 rsa = { version = "0.9.10", features = ["getrandom"] }
