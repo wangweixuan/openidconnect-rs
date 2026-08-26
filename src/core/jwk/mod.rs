@@ -538,9 +538,15 @@ impl PrivateSigningKey for CoreEdDsaPrivateSigningKey {
 
 /// Trait used to allow testing with an alternative RNG.
 /// Clone is necessary to get a mutable version of the RNG.
-pub(crate) trait RngClone: dyn_clone::DynClone + rand::RngCore + rand::CryptoRng {}
+pub(crate) trait RngClone:
+    dyn_clone::DynClone + rsa::rand_core::RngCore + rsa::rand_core::CryptoRng
+{
+}
 dyn_clone::clone_trait_object!(RngClone);
-impl<T> RngClone for T where T: rand::RngCore + rand::CryptoRng + Clone {}
+impl<T> RngClone for T where
+    T: rsa::rand_core::RngCore + rsa::rand_core::CryptoRng + Clone
+{
+}
 
 /// RSA private key.
 ///
@@ -554,7 +560,7 @@ pub struct CoreRsaPrivateSigningKey {
 impl CoreRsaPrivateSigningKey {
     /// Converts an RSA private key (in PEM format) to a JWK representing its public key.
     pub fn from_pem(pem: &str, kid: Option<JsonWebKeyId>) -> Result<Self, String> {
-        Self::from_pem_internal(pem, Box::new(rand::rngs::OsRng), kid)
+        Self::from_pem_internal(pem, Box::new(rsa::rand_core::OsRng), kid)
     }
 
     pub(crate) fn from_pem_internal(
