@@ -13,9 +13,7 @@ use crate::{JsonWebKey, JsonWebKeyId, JsonWebTokenAlgorithm, PrivateSigningKey, 
 
 use base64::prelude::BASE64_STANDARD;
 use base64::Engine;
-use rand::rngs::mock::StepRng;
-use rand::{CryptoRng, RngCore};
-use rsa::rand_core;
+use rsa::rand_core::{self, CryptoRng, RngCore};
 
 #[test]
 fn test_core_jwk_deserialization_rsa() {
@@ -731,21 +729,22 @@ fn expect_rsa_sig(
 }
 
 #[derive(Clone)]
-struct TestRng(StepRng);
+struct TestRng(u64);
 
 impl CryptoRng for TestRng {}
 impl RngCore for TestRng {
     fn next_u32(&mut self) -> u32 {
-        self.0.next_u32()
+        self.next_u64() as u32
     }
     fn next_u64(&mut self) -> u64 {
-        self.0.next_u64()
+        self.0
     }
     fn fill_bytes(&mut self, dest: &mut [u8]) {
-        self.0.fill_bytes(dest)
+        rand_core::impls::fill_bytes_via_next(self, dest)
     }
     fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), rand_core::Error> {
-        self.0.try_fill_bytes(dest)
+        self.fill_bytes(dest);
+        Ok(())
     }
 }
 
@@ -795,7 +794,7 @@ fn test_rsa_signing() {
     let private_key = CoreRsaPrivateSigningKey::from_pem_internal(
         TEST_RSA_KEY,
         // Constant salt used for PSS test vectors below.
-        Box::new(TestRng(StepRng::new(127, 0))),
+        Box::new(TestRng(127)),
         Some(JsonWebKeyId::new("test_key".to_string())),
     )
     .unwrap();

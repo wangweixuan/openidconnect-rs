@@ -184,7 +184,7 @@ mod tests {
 
     use base64::prelude::BASE64_URL_SAFE_NO_PAD;
     use base64::Engine;
-    use sha2::Digest;
+    use sha2_compat::Digest;
 
     #[test]
     fn test_leading_zeros_are_parsed_correctly() {
@@ -203,13 +203,13 @@ mod tests {
             }
         )).unwrap();
 
-        let mut hasher = sha2::Sha256::new();
+        let mut hasher = sha2_compat::Sha256::new();
         hasher.update(msg);
         let hash = hasher.finalize().to_vec();
         assert! {
             verify_rsa_signature(
                 &key,
-                rsa::Pkcs1v15Sign::new::<sha2::Sha256>(),
+                rsa::Pkcs1v15Sign::new::<sha2_compat::Sha256>(),
                 &hash,
                 &signature,
             ).is_ok()
